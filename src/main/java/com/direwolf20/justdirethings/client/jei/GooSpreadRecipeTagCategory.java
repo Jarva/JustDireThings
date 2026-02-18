@@ -93,7 +93,7 @@ public class GooSpreadRecipeTagCategory implements IRecipeCategory<RecipeHolder<
         builder.addSlot(RecipeIngredientRole.CATALYST, 29, 12)
                 .addIngredients(
                         Ingredient.of(
-                                JustDireItemTags.GOO_RECIPE_TIERS.get(recipe.getTierRequirement()-1)));
+                                JustDireItemTags.GOO_RECIPE_TIERS.get(recipe.value().getTierRequirement()-1)));
 
         BlockState output = recipe.value().getOutput();
         if (output.getBlock().asItem() != Items.AIR) {
