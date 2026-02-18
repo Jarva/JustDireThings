@@ -26,6 +26,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.Ingredient;
+import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.level.block.LiquidBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.neoforge.common.crafting.BlockTagIngredient;
@@ -33,9 +34,9 @@ import net.neoforged.neoforge.common.crafting.BlockTagIngredient;
 import java.util.ArrayList;
 import java.util.List;
 
-public class GooSpreadRecipeTagCategory implements IRecipeCategory<GooSpreadRecipeTag> {
-    public static final RecipeType<GooSpreadRecipeTag> TYPE = RecipeType.create(JustDireThings.MODID,
-            "goo_spread_recipe_tag", GooSpreadRecipeTag.class);
+public class GooSpreadRecipeTagCategory implements IRecipeCategory<RecipeHolder<GooSpreadRecipeTag>> {
+    public static final RecipeType<RecipeHolder<GooSpreadRecipeTag>> TYPE =
+            RecipeType.createFromVanilla(Registration.GOO_SPREAD_RECIPE_TYPE_TAG.get());
 
     public static final int width = 120;
     public static final int height = 40;
@@ -55,7 +56,7 @@ public class GooSpreadRecipeTagCategory implements IRecipeCategory<GooSpreadReci
     }
 
     @Override
-    public RecipeType<GooSpreadRecipeTag> getRecipeType() {
+    public RecipeType<RecipeHolder<GooSpreadRecipeTag>> getRecipeType() {
         return TYPE;
     }
 
@@ -75,8 +76,7 @@ public class GooSpreadRecipeTagCategory implements IRecipeCategory<GooSpreadReci
     }
 
     @Override
-    public void draw(GooSpreadRecipeTag recipe, IRecipeSlotsView slotsView, GuiGraphics gui, double mouseX,
-            double mouseY) {
+    public void draw(RecipeHolder<GooSpreadRecipeTag> recipe, IRecipeSlotsView slotsView, GuiGraphics gui, double mouseX, double mouseY) {
         RenderSystem.enableBlend();
         arrow.draw(gui, 54, 12);
         background.draw(gui, 17, 0);
@@ -84,25 +84,18 @@ public class GooSpreadRecipeTagCategory implements IRecipeCategory<GooSpreadReci
     }
 
     @Override
-    public void setRecipe(IRecipeLayoutBuilder builder, GooSpreadRecipeTag recipe, IFocusGroup focuses) {
-        BlockTagIngredient input = recipe.getInput();
+    public void setRecipe(IRecipeLayoutBuilder builder, RecipeHolder<GooSpreadRecipeTag> recipe, IFocusGroup focuses) {
+        BlockTagIngredient input = recipe.value().getInput();
         IRecipeSlotBuilder inputSlotBuilder = builder.addSlot(RecipeIngredientRole.INPUT, 9, 12);
         List<ItemStack> itemstacks = input.getItems().toList();
         inputSlotBuilder.addItemStacks(itemstacks);
-        /*if (input.getBlock().asItem() != Items.AIR) {
-            inputSlotBuilder
-                    .addItemStack(new ItemStack(input.getBlock()));
-        } else if (input.getBlock() instanceof LiquidBlock liquidBlock) {
-            inputSlotBuilder
-                    .addFluidStack(liquidBlock.fluid, 1000);
-        }*/
         
         builder.addSlot(RecipeIngredientRole.CATALYST, 29, 12)
                 .addIngredients(
                         Ingredient.of(
                                 JustDireItemTags.GOO_RECIPE_TIERS.get(recipe.getTierRequirement()-1)));
 
-        BlockState output = recipe.getOutput();
+        BlockState output = recipe.value().getOutput();
         if (output.getBlock().asItem() != Items.AIR) {
             builder.addSlot(RecipeIngredientRole.OUTPUT, 88, 12)
                     .addItemStack(new ItemStack(output.getBlock()));
