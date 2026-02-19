@@ -1,6 +1,7 @@
 package com.direwolf20.justdirethings.client.jei;
 
 import com.direwolf20.justdirethings.JustDireThings;
+import com.direwolf20.justdirethings.datagen.JustDireItemTags;
 import com.direwolf20.justdirethings.datagen.recipes.GooSpreadRecipeTag;
 import com.direwolf20.justdirethings.setup.Registration;
 import com.mojang.blaze3d.systems.RenderSystem;
@@ -15,9 +16,16 @@ import mezz.jei.api.recipe.RecipeIngredientRole;
 import mezz.jei.api.recipe.RecipeType;
 import mezz.jei.api.recipe.category.IRecipeCategory;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.core.Holder;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.tags.TagKey;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.level.block.LiquidBlock;
 import net.minecraft.world.level.block.state.BlockState;
@@ -81,25 +89,11 @@ public class GooSpreadRecipeTagCategory implements IRecipeCategory<RecipeHolder<
         IRecipeSlotBuilder inputSlotBuilder = builder.addSlot(RecipeIngredientRole.INPUT, 9, 12);
         List<ItemStack> itemstacks = input.getItems().toList();
         inputSlotBuilder.addItemStacks(itemstacks);
-        /*if (input.getBlock().asItem() != Items.AIR) {
-            inputSlotBuilder
-                    .addItemStack(new ItemStack(input.getBlock()));
-        } else if (input.getBlock() instanceof LiquidBlock liquidBlock) {
-            inputSlotBuilder
-                    .addFluidStack(liquidBlock.fluid, 1000);
-        }*/
-        List<ItemStack> catalystlist = new ArrayList<>();
-
-        if (recipe.value().getTierRequirement() <= 1)
-            catalystlist.add(new ItemStack(Registration.GooBlock_Tier1.get()));
-        if (recipe.value().getTierRequirement() <= 2)
-            catalystlist.add(new ItemStack(Registration.GooBlock_Tier2.get()));
-        if (recipe.value().getTierRequirement() <= 3)
-            catalystlist.add(new ItemStack(Registration.GooBlock_Tier3.get()));
-        if (recipe.value().getTierRequirement() <= 4)
-            catalystlist.add(new ItemStack(Registration.GooBlock_Tier4.get()));
+        
         builder.addSlot(RecipeIngredientRole.CATALYST, 29, 12)
-                .addItemStacks(catalystlist);
+                .addIngredients(
+                        Ingredient.of(
+                                JustDireItemTags.GOO_RECIPE_TIERS.get(recipe.value().getTierRequirement()-1)));
 
         BlockState output = recipe.value().getOutput();
         if (output.getBlock().asItem() != Items.AIR) {
