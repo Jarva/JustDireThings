@@ -33,14 +33,19 @@ public class LevelPosMap<T extends BlockEntity> {
 
     public Optional<T> find(Level level, Vec3 vec, BiPredicate<T, Vec3> filter) {
         String key = getKey(level);
-        Set<BlockPos> positions = posMap.getOrDefault(key, new HashSet<>());
+        Set<BlockPos> positions = posMap.get(key);
+        if (positions == null || positions.isEmpty()) {
+            return Optional.empty();
+        }
 
-        for (BlockPos position : positions) {
+        Iterator<BlockPos> iterator = positions.iterator();
+        while (iterator.hasNext()) {
+            BlockPos position = iterator.next();
             if (!level.isLoaded(position)) continue;
 
             BlockEntity be = level.getBlockEntity(position);
             if (!type.isInstance(be)) {
-                positions.remove(position);
+                iterator.remove();
                 continue;
             }
 
